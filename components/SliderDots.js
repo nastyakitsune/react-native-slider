@@ -1,11 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {StyleSheet, View} from 'react-native';
 
-const SliderDots = ({count, progress}) => {
-  const dots = Array(count)
-    .fill(0)
-    .map((_, i) => i);
+import {fillArray} from '../utils/formatters.js';
 
+const SliderDots = ({count, progress}) => {
   const [step, setStep] = useState(0);
 
   useEffect(() => {
@@ -20,7 +18,7 @@ const SliderDots = ({count, progress}) => {
 
   return (
     <View style={styles.dotsContainer}>
-      {dots.map((dot) => (
+      {fillArray(count).map((dot) => (
         <View
           key={`dot-${dot}`}
           style={[styles.dot, dot === step ? styles.dotActive : {}]}

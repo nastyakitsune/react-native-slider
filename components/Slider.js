@@ -1,7 +1,6 @@
 import React, {useState, useRef} from 'react';
 import {
   StyleSheet,
-  Dimensions,
   View,
   FlatList,
   Animated,
@@ -9,17 +8,14 @@ import {
   TouchableOpacity,
 } from 'react-native';
 
+import {sortArray, uniqArray} from '../utils/formatters';
+import {screenWidth} from '../utils/screen';
+
 import Slide from './Slide';
 import SliderDots from './SliderDots';
 
-const screenWidth = Dimensions.get('window').width;
-
-const sortItems = (a, b) => (b.category > a.category ? -1 : 1);
-
 const Slider = ({items}) => {
-  const categories = items
-    .map((item) => item.category)
-    .filter((v, i, a) => a.indexOf(v) === i);
+  const categories = items.map((item) => item.category).filter(uniqArray);
 
   const pagesRef = useRef(null);
 
@@ -48,7 +44,7 @@ const Slider = ({items}) => {
       <View style={styles.container}>
         <FlatList
           ref={pagesRef}
-          data={items.sort(sortItems)}
+          data={items.sort(sortArray)}
           pagingEnabled
           horizontal
           showsHorizontalScrollIndicator={false}
@@ -61,23 +57,27 @@ const Slider = ({items}) => {
             <Slide content={image} progress={progress} count={items.length} />
           )}
         />
-        <View style={styles.categories}>
-          {categories.sort(sortItems).map((cat, index) => (
-            <TouchableOpacity
-              key={`${cat}-${index}`}
-              onPress={() => onCategoryPress(cat)}>
+        <FlatList
+          data={categories.sort(sortArray)}
+          style={styles.categories}
+          contentContainerStyle={styles.categoriesContainer}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(cat, index) => `${cat}-${index}`}
+          renderItem={({item}, index) => (
+            <TouchableOpacity onPress={() => onCategoryPress(item)}>
               <Text
                 style={[
                   styles.category,
-                  cat === category && styles.categoryActive,
+                  item === category && styles.categoryActive,
                 ]}>
-                {cat}
+                {item}
               </Text>
             </TouchableOpacity>
-          ))}
-        </View>
+          )}
+        />
       </View>
-      <SliderDots count={items.length} progress={progress} />
+      <SliderDots progress={progress} count={items.length} />
     </>
   );
 };
@@ -90,9 +90,11 @@ const styles = StyleSheet.create({
   scrollContainer: {
     marginBottom: 15,
   },
+  categoriesContainer: {
+    paddingHorizontal: 15,
+  },
   categories: {
     flexDirection: 'row',
-    paddingHorizontal: 15,
     position: 'absolute',
     top: 15,
   },

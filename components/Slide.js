@@ -1,7 +1,10 @@
 import React from 'react';
-import {Dimensions, StyleSheet, View, Image, Animated} from 'react-native';
-import {sliderBackgrounds} from '../assets/design/colors.js';
-const screenWidth = Dimensions.get('window').width;
+import {StyleSheet, View, Image, Animated} from 'react-native';
+
+import {fillArray} from '../utils/formatters';
+import {screenWidth} from '../utils/screen';
+
+import {sliderBackgrounds} from '../assets/design/colors';
 
 const Slide = ({content, count, progress}) => {
   return (
@@ -11,9 +14,7 @@ const Slide = ({content, count, progress}) => {
           styles.background,
           {
             backgroundColor: progress.interpolate({
-              inputRange: Array(count)
-                .fill(0)
-                .map((_, i) => i),
+              inputRange: fillArray(count),
               outputRange: sliderBackgrounds.slice(0, count),
             }),
           },
