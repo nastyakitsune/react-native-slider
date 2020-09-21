@@ -17,7 +17,8 @@ import SliderDots from './SliderDots';
 const Slider = ({items}) => {
   const categories = items.map((item) => item.category).filter(uniqArray);
 
-  const pagesRef = useRef(null);
+  const sliderRef = useRef(null);
+  const categoriesRef = useRef(null);
 
   const [category, setCategory] = useState(categories[0]);
 
@@ -31,19 +32,26 @@ const Slider = ({items}) => {
   const onCategoryPress = (pressed) => {
     const categoryItems = items.filter((item) => item.category === pressed);
     const index = items.indexOf(categoryItems[0]);
-    pagesRef.current.scrollToIndex({animated: true, index});
+    sliderRef.current.scrollToIndex({animated: true, index});
   };
 
   const onMomentumScrollEnd = ({nativeEvent: {contentOffset}}) => {
     const index = contentOffset.x / screenWidth;
-    items[index].category !== category && setCategory(items[index].category);
+    if (items[index].category !== category) {
+      setCategory(items[index].category);
+      categoriesRef.current.scrollToIndex({
+        animated: true,
+        index: categories.indexOf(items[index].category),
+        viewOffset: 15,
+      });
+    }
   };
 
   return (
     <>
       <View style={styles.container}>
         <FlatList
-          ref={pagesRef}
+          ref={sliderRef}
           data={items.sort(sortArray)}
           pagingEnabled
           horizontal
@@ -58,6 +66,7 @@ const Slider = ({items}) => {
           )}
         />
         <FlatList
+          ref={categoriesRef}
           data={categories.sort(sortArray)}
           style={styles.categories}
           contentContainerStyle={styles.categoriesContainer}
@@ -99,7 +108,7 @@ const styles = StyleSheet.create({
     top: 15,
   },
   category: {
-    marginRight: 5,
+    marginRight: 15,
     fontSize: 18,
     color: '#E9ECEF',
   },
