@@ -19,10 +19,9 @@ const Slider = ({items}) => {
 
   const sliderRef = useRef(null);
   const categoriesRef = useRef(null);
+  const progress = useRef(new Animated.Value(0)).current;
 
   const [category, setCategory] = useState(categories[0]);
-
-  const [progress] = useState(new Animated.Value(0));
 
   const onScroll = ({nativeEvent: {contentOffset}}) => {
     const offset = contentOffset.x / screenWidth;
@@ -61,7 +60,7 @@ const Slider = ({items}) => {
           scrollEventThrottle={16}
           keyExtractor={(slide, index) => `${slide}-${index}`}
           contentContainerStyle={styles.scrollContainer}
-          renderItem={({item: {image}}, index) => (
+          renderItem={({item: {image}}) => (
             <Slide content={image} progress={progress} count={items.length} />
           )}
         />

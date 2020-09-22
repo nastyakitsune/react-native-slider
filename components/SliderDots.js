@@ -3,12 +3,17 @@ import {StyleSheet, View} from 'react-native';
 
 import {fillArray} from '../utils/formatters.js';
 
+// eslint-disable-next-line no-bitwise
+const isNumberInteger = (number) => (number ^ 0) === number;
+
 const SliderDots = ({count, progress}) => {
   const [step, setStep] = useState(0);
 
   useEffect(() => {
     const listener = ({value}) => {
-      setStep(Math.round(value));
+      if (isNumberInteger(value) && step !== value) {
+        setStep(value);
+      }
     };
 
     progress.addListener(listener);
